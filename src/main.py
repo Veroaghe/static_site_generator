@@ -4,7 +4,12 @@ from textnode import TextNode, TextType
 from htmlnode import LeafNode
 
 def main():
-    pass
+    node = TextNode(
+        "This is text with an ![image](https://i.imgur.com/zjjcJKZ.png) and another [second image](https://i.imgur.com/3elNhQu.png)",
+        TextType.TEXT,
+    )
+
+    print(split_nodes_link([node]))
 
 
 def text_node_to_html_node(text_node):
@@ -81,6 +86,60 @@ def extract_markdown_links(text):
                           ([^\(\)]*) # group that includes any character except for parentheses
                           \) # escaped closing parentheses
                           """, text, re.VERBOSE)
+
+
+def split_nodes_image(old_nodes):
+    new_nodes = []
+
+    for node in old_nodes:
+
+        text = node.text
+        image_extraction = extract_markdown_images(text)
+
+        if node.text_type is not TextType.TEXT or text == "" or image_extraction == []:
+            new_nodes.append(node)
+            continue
+        
+        start_index = 0
+
+        for alt, url in image_extraction:
+            image_index = text.find(f"![{alt}]({url})", start_index)
+            if start_index != image_index:
+                new_nodes.append(TextNode(text[start_index:image_index], TextType.TEXT))
+            new_nodes.append(TextNode(alt, TextType.IMAGE, url))
+            start_index = image_index + len(f"![{alt}]({url})")
+
+        if start_index != len(text):
+            new_nodes.append(TextNode(text[start_index:], TextType.TEXT))
+    
+    return new_nodes
+
+
+def split_nodes_link(old_nodes):
+    new_nodes = []
+
+    for node in old_nodes:
+
+        text = node.text
+        link_extraction = extract_markdown_links(text)
+
+        if node.text_type is not TextType.TEXT or text == "" or link_extraction == []:
+            new_nodes.append(node)
+            continue
+        
+        start_index = 0
+
+        for alt, url in link_extraction:
+            link_index = text.find(f"[{alt}]({url})", start_index)
+            if start_index != link_index:
+                new_nodes.append(TextNode(text[start_index:link_index], TextType.TEXT))
+            new_nodes.append(TextNode(alt, TextType.LINK, url))
+            start_index = link_index + len(f"[{alt}]({url})")
+
+        if start_index != len(text):
+            new_nodes.append(TextNode(text[start_index:], TextType.TEXT))
+    
+    return new_nodes
 
 
 if __name__ == "__main__":
