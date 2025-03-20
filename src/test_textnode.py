@@ -1,7 +1,7 @@
 import unittest
 
 from textnode import TextNode, TextType
-from main import text_node_to_html_node, split_nodes_delimiter
+from main import text_node_to_html_node, split_nodes_delimiter, extract_markdown_images, extract_markdown_links
 
 class TestTextNode(unittest.TestCase):
     def test_eq(self):
@@ -128,6 +128,74 @@ class Test_SplitNodesDelimiter(unittest.TestCase):
         node = TextNode("", TextType.TEXT)
         new_nodes = split_nodes_delimiter([node], "`", TextType.CODE)
         self.assertEqual(new_nodes, [node])
+
+
+class test_LinkImageExtractors(unittest.TestCase):
+    def test_extract_markdown_images(self):
+        matches = extract_markdown_images(
+            "This is text with a ![rick roll](https://i.imgur.com/aKaOqIh.gif) and ![obi wan](https://i.imgur.com/fJRm4Vk.jpeg)"
+        )
+        expected = [("rick roll", "https://i.imgur.com/aKaOqIh.gif"), ("obi wan", "https://i.imgur.com/fJRm4Vk.jpeg")]
+        self.assertListEqual(expected, matches)
+    
+    def test_extract_markdown_links(self):
+        matches = extract_markdown_links(
+            "This is text with a link [to boot dev](https://www.boot.dev) and [to youtube](https://www.youtube.com/@bootdotdev)"
+        )
+        expected = [("to boot dev", "https://www.boot.dev"), ("to youtube", "https://www.youtube.com/@bootdotdev")]
+        self.assertListEqual(expected, matches)
+    
+    def test_combination_extraction(self):
+        text = "This is text with a link [to boot dev](https://www.boot.dev), an image ![rick roll](https://i.imgur.com/aKaOqIh.gif), another link [to youtube](https://www.youtube.com/@bootdotdev) and another ![obi wan](https://i.imgur.com/fJRm4Vk.jpeg)"
+        images = extract_markdown_images(text)
+        expected_images = [("rick roll", "https://i.imgur.com/aKaOqIh.gif"), ("obi wan", "https://i.imgur.com/fJRm4Vk.jpeg")]
+        links = extract_markdown_links(text)
+        expected_links = [("to boot dev", "https://www.boot.dev"), ("to youtube", "https://www.youtube.com/@bootdotdev")]
+        self.assertListEqual(expected_links, links)
+        self.assertListEqual(expected_images, images)
+    
+    def test_empty_links(self):
+        text = "empty link []()"
+        matches = extract_markdown_links(text)
+        expected = [('','')]
+        self.assertListEqual(expected, matches)
+    
+    def test_empty_images(self):
+        text = "empty link ![]()"
+        matches = extract_markdown_images(text)
+        expected = [('','')]
+        self.assertListEqual(expected, matches)
+    
+    def test_no_links(self):
+        text = "empty link ![]() and normal image ![rick roll](https://i.imgur.com/aKaOqIh.gif)"
+        matches = extract_markdown_links(text)
+        expected = []
+        self.assertListEqual(expected, matches)
+    
+    def test_no_images(self):
+        text = "empty link []() and normal link [to boot dev](https://www.boot.dev)"
+        matches = extract_markdown_images(text)
+        expected = []
+        self.assertListEqual(expected, matches)
+    
+    def test_no_extra_square_brackets_allowed(self):
+        test_cases = [
+            ("[[to boot dev](https://www.boot.dev)", [('to boot dev', 'https://www.boot.dev')]),
+            "[[to boot dev]](https://www.boot.dev)",
+            "[to boot dev]](https://www.boot.dev)",
+            "[to boot dev]((https://www.boot.dev)",
+            "[to boot dev]((https://www.boot.dev))",
+            ("[to boot dev](https://www.boot.dev))", [('to boot dev', 'https://www.boot.dev')]),
+            "[to boot[] dev](https://www.boot.dev)",
+            "[to boot dev](https://www.(boot).dev)",
+        ]
+        for test in test_cases:
+            if isinstance(test, tuple):
+                test, expected = test
+            else:
+                expected = []
+            match = extract_markdown_links(test)
+            self.assertEqual(match, expected)
 
 
 if __name__ == "__main__":
