@@ -11,22 +11,36 @@ class BlockType(Enum):
     ORDERED_LIST = 6
 
 
+class BlockTypeError(Exception):
+    def __init__(self, block, msg="Block has no block_type"):
+        self.block = block
+        self.msg = msg
+        super().__init__(self, msg)
+    
+    def __str__(self):
+        return f'''
+    {self.msg}
+    Input: {[self.block]}'''
+
+
 def markdown_to_blocks(text):
     blocks = text.split("\n\n")
     # blocks = [re.sub(r"\s*\n\s*", "\n", block.strip()) for block in blocks if block != "" and block.strip()[:3] != "```"]
 
     reformatted_blocks = []
     for block in blocks:
-        block = block.strip()
+        stripped_block = block.lstrip()
 
-        if block[:3] == "```":
+        if stripped_block[:3] == "```":
+            removable_space = len(block) - len(stripped_block) - 1
             split_block = block.split("\n")
-            split_block[-1] = split_block[-1].strip()
-            block = "\n".join(split_block)
+            new_block = [split_block[0]] + [line[removable_space:] for line in split_block[1:-1]] + [split_block[-1].strip()]
+            block = "\n".join(new_block)
+            # print([block]) #TEST
             reformatted_blocks.append(block)
             continue
 
-        if block == "":
+        if block.strip() == "":
             continue
 
         reformatted_blocks.append(re.sub(r"\s*\n\s*", "\n", block.strip()))
@@ -36,7 +50,12 @@ def markdown_to_blocks(text):
 
 
 def block_to_block_type(block):
-    lines = block.split("\n")
+    if block == "" or block is None:
+        raise BlockTypeError(block)
+
+    lines = block.strip().split("\n")
+    lines = [line for line in lines if line != ""]
+    # print(lines) #TEST
     if len(lines) > 1:
         if lines[0][0:2] == "- ": # testing for unordered list
             for line in lines:
@@ -50,7 +69,7 @@ def block_to_block_type(block):
                     return BlockType.PARAGRAPH
             return BlockType.QUOTE
 
-        elif len(lines) >= 3 and lines[0][:3] == lines[-1] == '```':
+        elif len(lines) >= 3 and lines[0][:3] == lines[-1].strip() == '```':
                 return BlockType.CODE
 
         else: # testing for ordered list
@@ -65,10 +84,6 @@ def block_to_block_type(block):
                 except:
                     return BlockType.PARAGRAPH
             return BlockType.ORDERED_LIST
-        # else:
-        #     print(len(lines), lines, lines[0][:3] == lines[-1] == '```')
-        #     if len(lines) >= 3 and lines[0][:3] == lines[-1] == '```':
-        #         return BlockType.CODE
 
     split_block = block.split()
     heading = split_block[0]
@@ -84,15 +99,20 @@ if __name__ == "__main__":
     text = """
         ```python
         def is_this_a_valid_code_block():
+            while True:
+                break
             return True
+        
+        def another_function():
+            return
         ```
         """
     
     output = markdown_to_blocks(text)
     print()
-    print(output)
+    print(output, block_to_block_type(output[0]))
     print()
-    [print([out], block_to_block_type(out)) for out in output]
-
-    print("##    ".split())
+    [print(out) for out in output]
+    # print()
+    print(text)
 
