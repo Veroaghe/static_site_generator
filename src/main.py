@@ -2,6 +2,7 @@
 from textnode import TextNode, TextType
 from htmlnode import LeafNode
 from inline_markdown import text_to_textnodes
+from block_markdown import markdown_to_blocks, block_to_block_type, BlockType
 
 def main():
     text = "This is **text** with an _italic_ word and a `code block` and an ![obi wan image](https://i.imgur.com/fJRm4Vk.jpeg) and a [link](https://boot.dev)"
@@ -30,6 +31,32 @@ def text_node_to_html_node(text_node):
             return LeafNode("img", "", {"src":text_node.url, "alt":text})
         case _:
             raise Exception("text_node has an invalid text_type")
+
+
+# def markdown_to_html_node(markdown):
+#     blocks = markdown_to_blocks(markdown)
+#     for block in blocks:
+#         block_node = block_to_html_node
+#     pass
+
+
+# def block_to_html_node(block):
+#     block_type = block_to_block_type(block)
+
+#     match block_type:
+#         case BlockType.PARAGRAPH:
+#             pass
+#         case BlockType.HEADING:
+#             pass
+#         case BlockType.CODE:
+#             pass
+#         case BlockType.QUOTE:
+#             pass
+#         case BlockType.UNORDERED_LIST:
+#             pass
+#         case BlockType.ORDERED_LIST:
+#             pass
+
 
 
 if __name__ == "__main__":
