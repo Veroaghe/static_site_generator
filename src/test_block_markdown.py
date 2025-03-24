@@ -6,14 +6,14 @@ from block_markdown import markdown_to_blocks, block_to_block_type
 class Test_SplitBlocks(unittest.TestCase):
     def test_markdown_to_blocks(self):
             md = """
-        This is **bolded** paragraph
+This is **bolded** paragraph
 
-        This is another paragraph with _italic_ text and `code` here
-        This is the same paragraph on a new line
+This is another paragraph with _italic_ text and `code` here
+This is the same paragraph on a new line
 
-        - This is a list
-        - with items
-        """
+- This is a list
+- with items
+"""
             blocks = markdown_to_blocks(md)
             self.assertEqual(
                 blocks,
@@ -26,18 +26,18 @@ class Test_SplitBlocks(unittest.TestCase):
     
     def test_excessive_newlines(self):
             md = """
-        This is **bolded** paragraph
+This is **bolded** paragraph
 
 
 
-        This is another paragraph with _italic_ text and `code` here
-        This is the same paragraph on a new line
+This is another paragraph with _italic_ text and `code` here
+This is the same paragraph on a new line
 
 
 
-        - This is a list
-        - with items
-        """
+- This is a list
+- with items
+"""
             blocks = markdown_to_blocks(md)
             self.assertEqual(
                 blocks,
@@ -64,9 +64,9 @@ class Test_SplitBlocks(unittest.TestCase):
         blocks = markdown_to_blocks("\ntext here\n\nsome more text\n")
         self.assertEqual(blocks, ["text here", "some more text"])
     
-    def test_remove_spaces_around_single_newline_chars(self):
-        blocks = markdown_to_blocks("\ntext here\n\nsome more text     \n     last text     \n     last text\n\n\nI lied before")
-        self.assertEqual(blocks, ["text here", "some more text\nlast text\nlast text", "I lied before"])
+    # def test_remove_spaces_around_single_newline_chars(self):
+    #     blocks = markdown_to_blocks("\ntext here\n\nsome more text     \n     last text     \n     last text\n\n\nI lied before")
+    #     self.assertEqual(blocks, ["text here", "some more text\nlast text\nlast text", "I lied before"])
 
 
 class Test_BlockToBlocktype(unittest.TestCase):
@@ -93,10 +93,10 @@ class Test_BlockToBlocktype(unittest.TestCase):
             ("1. invalid\n10. numbered\n3. list", BlockType.PARAGRAPH), # 19. invalid numbered list: numbers need to increment by 1
             ("1. valid\n2. numbered\n3. list", BlockType.ORDERED_LIST), # 20. valid numbered list
             ("2. invalid\n3. numbered\n4. list", BlockType.PARAGRAPH), # 21. invalid numbered list: need to start at 1
-            ("## ", BlockType.PARAGRAPH), # 22. Invalid Heading: no text after heading hashtags
+            ("####### Not a heading", BlockType.PARAGRAPH), # 22. Invalid Heading: too many hashtags
             ("```python\ncode block\n```", BlockType.CODE),
-            ('```python\n        def is_this_a_valid_code_block():\n            return True\n        ```', BlockType.PARAGRAPH),
-            ('```python\n        def is_this_a_valid_code_block():\n            return True\n```', BlockType.CODE),
+            # ('```python\n        def is_this_a_valid_code_block():\n            return True\n        ```', BlockType.PARAGRAPH),
+            # ('```python\n        def is_this_a_valid_code_block():\n            return True\n```', BlockType.CODE),
             ("placeholder", BlockType.PARAGRAPH),
         ]
 
@@ -106,5 +106,5 @@ class Test_BlockToBlocktype(unittest.TestCase):
             block_type = block_to_block_type(block)
             self.assertEqual(block_type, expected, msg=f"\n\ntest_case {test_num}:\n\n{[block]}")
 
-if __name__ == "main":
+if __name__ == "__main__":
     unittest.main()

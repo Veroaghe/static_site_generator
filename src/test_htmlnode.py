@@ -13,11 +13,6 @@ class Test_HTMLNode(unittest.TestCase):
     def test_node_is_HTMLNode(self):
         self.assertIsInstance(self.node1, HTMLNode)
 
-    # def test_exception_on_missing_value_and_children(self):
-    #     # HTMLNode needs either a value or a list of children; otherwise an Exception is raised
-    #     # By default, all HTMLNode arguments are None
-    #     self.assertRaises(Exception, HTMLNode)
-    
     def test_representation(self):
         expr = "HTMLNode(" in self.node1.__repr__()
         self.assertTrue(expr)

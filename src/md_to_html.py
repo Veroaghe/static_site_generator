@@ -60,6 +60,52 @@ def markdown_to_html_node(markdown):
     pass
 
 
+def block_to_html_node(block):
+    block_type = block_to_block_type(block)
+
+    match block_type:
+        case BlockType.PARAGRAPH:
+            lines = block.split("\n")
+            paragraph = " ".join(lines) # \n are converted into space for HTML
+            child_nodes = text_to_children(paragraph)
+            return ParentNode("p", child_nodes)
+
+        case BlockType.HEADING:
+            heading_num = len(block.split()[0])
+            text = block[heading_num + 1:]
+            child_nodes = text_to_children(text)
+            return ParentNode(f"h{heading_num}", child_nodes)
+
+        case BlockType.CODE:
+            # To represent multiple lines of code, wrap the <code> element within a <pre> element.
+            # The <code> element by itself only represents a single phrase of code or line of code.
+            if not block.startswith("```") or not block.endswith("```"):
+                raise ValueError("invalid code block")
+            text = "\n".join(block.split("\n")[1:])[:-3] # Removes first line entirely (because there might be a language identifier after the opening ```)
+            raw_text_node = TextNode(text, TextType.TEXT)
+            child = text_node_to_html_node(raw_text_node)
+            code = ParentNode("code", [child])
+            return ParentNode("pre", [code])
+
+        case BlockType.QUOTE:
+            lines = block.split("\n")
+            new_lines = [line[1:].strip() for line in lines]
+            text = " ".join(new_lines) # \n are converted into space for HTML
+            children = text_to_children(text)
+            return ParentNode("blockquote", children)
+
+        case BlockType.UNORDERED_LIST:
+            li_nodes = block_to_list_of_li_nodes(block)
+            return ParentNode("ul", li_nodes)
+
+        case BlockType.ORDERED_LIST:
+            li_nodes = block_to_list_of_li_nodes(block)
+            return ParentNode("ol", li_nodes)
+
+        case _:
+            raise UnsupportedBlockTypeError(block_type)
+
+
 def text_to_children(text):
     '''
     Convert a text into a list of textnodes.
@@ -90,61 +136,37 @@ def block_to_list_of_li_nodes(block):
     return li_nodes
 
 
-def block_to_html_node(block):
-    block_type = block_to_block_type(block)
-    # print([block], block_type) #TEST
-
-    match block_type:
-        case BlockType.PARAGRAPH:
-            child_nodes = text_to_children(block)
-            return ParentNode("p", child_nodes)
-
-        case BlockType.HEADING:
-            heading_num = len(block.split()[0]) # a number from 1 to 6, already validated by block_to_block_type
-            text = block[heading_num + 1:]
-            child_nodes = text_to_children(text)
-            return ParentNode(f"h{heading_num}", child_nodes)
-
-        case BlockType.CODE:
-            # To represent multiple lines of code, wrap the <code> element within a <pre> element.
-            # The <code> element by itself only represents a single phrase of code or line of code.
-            lines = block.strip().split("\n")
-            lines = [line for line in lines if line != ""]
-            text = "\n".join(lines[1:-1]) + "\n"
-            text_node = TextNode(text, TextType.CODE)
-            children = [text_node_to_html_node(text_node)]
-            return ParentNode("pre", children)
-
-        case BlockType.QUOTE:
-            lines = block.split("\n")
-            new_lines = [line[1:].strip() for line in lines]
-            text = "\n".join(new_lines)
-            children = text_to_children(text)
-            return ParentNode("blockquote", children)
-
-        case BlockType.UNORDERED_LIST:
-            li_nodes = block_to_list_of_li_nodes(block)
-            return ParentNode("ul", li_nodes)
-
-        case BlockType.ORDERED_LIST:
-            li_nodes = block_to_list_of_li_nodes(block)
-            return ParentNode("ol", li_nodes)
-
-        case _:
-            raise UnsupportedBlockTypeError(block_type)
-
-
 if __name__ == "__main__":
     text = """
-        ```python
-        def is_this_a_valid_code_block():
-            while True:
-                break
-            return True
+Some other text.
 
-        def another_function():
-            return
-        ```
-        """
+```python
+def is_this_a_valid_code_block():
+    while True:
+        break
+    return True
+```
+
+```python
+def is_this_a_valid_code_block():
+    while True:
+        break
+    return True
+
+
+def a_second_function():
+    return
+
+
+def a_third_function():
+    return
+```
+
+Some other text.
+"""
     
-    print(markdown_to_html_node(text).children[0].children[0].value)
+    print(markdown_to_html_node(text).children[2].children[0].children[0].value)
+    # blocks = markdown_to_blocks(text)
+    # [print([block]) for block in blocks]
+    # print()
+    # [print(block, "\n") for block in blocks]
