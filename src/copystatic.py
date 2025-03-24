@@ -3,14 +3,14 @@ import shutil
 import time
 
 
-def empty_public_dir():
-    if os.path.exists("./public"):
-        shutil.rmtree("./public")
-    os.mkdir("./public")
+def empty_docs_dir():
+    if os.path.exists("docs"):
+        shutil.rmtree("docs")
+    os.mkdir("docs")
 
 
 def copy_files_recursive(source):
-    destination = "./public" + source[len("./static"):]
+    destination = "docs" + source[len("static"):]
     if not os.path.exists(destination):
         os.mkdir(destination)
 

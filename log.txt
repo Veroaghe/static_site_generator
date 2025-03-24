@@ -1,9 +1,9 @@
-Mon Mar 24 20:13:32 2025
-Following items were copied from "./static" to "./public"
+Mon Mar 24 20:42:13 2025
+Following items were copied from "static" to "docs"
   - images
   - index.css
 
-Following items were copied from "./static/images" to "./public/images"
+Following items were copied from "static/images" to "docs/images"
   - rivendell.png
   - tolkien.png
   - tom.png
