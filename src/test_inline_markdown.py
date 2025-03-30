@@ -63,6 +63,33 @@ class Test_SplitNodesDelimiter(unittest.TestCase):
         node = TextNode("", TextType.TEXT)
         new_nodes = split_nodes_delimiter([node], "`", TextType.CODE)
         self.assertEqual(new_nodes, [node])
+    
+    def test_EscapedDelimiters(self):
+        nodes = text_to_textnodes("\**These \_ delims \** should \` not \_ register \** or cause \` problems.\_")
+        self.assertEqual(len(nodes), 1)
+        self.assertEqual(nodes[0].text, "**These _ delims ** should ` not _ register ** or cause ` problems._")
+    
+    def test_EscapedDelimsMixedWithNormalDelims(self):
+        nodes = text_to_textnodes("Some _delimiters_ are \_escaped\_ while \**others\** are **not**")
+        self.assertEqual(len(nodes), 4)
+        self.assertEqual(nodes[0].text, "Some ")
+        self.assertEqual(nodes[1].text, "delimiters")
+        self.assertEqual(nodes[2].text, " are _escaped_ while **others** are ")
+        self.assertEqual(nodes[3].text, "not")
+        self.assertEqual(nodes[0].text_type, TextType.TEXT)
+        self.assertEqual(nodes[1].text_type, TextType.ITALIC)
+        self.assertEqual(nodes[2].text_type, TextType.TEXT)
+        self.assertEqual(nodes[3].text_type, TextType.BOLD)
+
+    def test_MultipleConsecutiveEscapedDelimsOfSameTypeMixedWithNormalDelimsOfSameType(self):
+        nodes = text_to_textnodes("\_Will \_this\_ _still_ work \_as intended\_")
+        self.assertEqual(len(nodes), 3)
+        self.assertEqual(nodes[0].text, "_Will _this_ ")
+        self.assertEqual(nodes[1].text, "still")
+        self.assertEqual(nodes[2].text, " work _as intended_")
+        self.assertEqual(nodes[0].text_type, TextType.TEXT)
+        self.assertEqual(nodes[1].text_type, TextType.ITALIC)
+        self.assertEqual(nodes[2].text_type, TextType.TEXT)
 
 
 class test_LinkImageExtractors(unittest.TestCase):

@@ -12,16 +12,29 @@ def split_nodes_delimiter(old_nodes, delimiter, text_type):
 
         text = node.text
         start_index = 0
+        override = 0 # overrides start_index in the case of escaped delims
 
         while True: 
-            opening = text.find(delimiter, start_index)
 
-            if opening == -1:
-                if start_index == 0:
+            opening = text.find(delimiter, start_index + override)
+            if opening == -1: # when text.find hasn't found anything
+                if start_index == 0: # when nothing found in entire text
                     new_nodes.append(node)
-                else:
+                else: # when nothing found since last .find call
                     new_nodes.append(TextNode(text[start_index:], node.text_type))
                 break
+            
+            # ignore openening delim when it is escaped with a forward slash
+            if text[opening - 1] == "\\":
+                # Remove the escape character from the text
+                text = text[:opening - 1] + text[opening:]
+                node.text = text
+                # Set a start_index override and continue the loop
+                override = opening - start_index
+                continue
+
+            if override > 0:
+                override = 0
 
             closing = text.find(delimiter, opening + len(delimiter))
             text_block = text[opening+len(delimiter):closing]
