@@ -1,0 +1,24 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Escaped Delimiters</title>
+    <link href="/static_site_generator/index.css" rel="stylesheet" />
+  </head>
+
+  <body>
+    <article><div><h1>Escaped Delimiters</h1><p><a href="/static_site_generator/project"><< Back to Project Development Overview</a></p><blockquote>Escaped delimiters are ignored by the <code>split_nodes_delimiters</code> function</blockquote><h2>Implementation</h2><p>My version of the <code>split_nodes_delimiters</code> function uses a <code>start_index</code> variable to tell <code>text.find</code> from which index to start looking for the next <code>opening</code> delimiter. However, if an escaped character has been found, then we shouldn't start looking for other delimiters from <code>start_index</code> but from the index at which we found the last escaped delimiter. To solve this, I've added an <code>override</code> variable:</p><pre><code>start_index = 0
+override = 0
+while True: 
+    opening = text.find(delimiter, start_index + override)
+    ...
+</code></pre><p>An escaped delimiter is one that is preceded by a backslash <code>\</code>. So when the function found a potential <i>opening delimiter</i>, it needs to check the previous character to know if it's an escaped character.</p><p>If it found a <code>\</code> then I want the code to do the following:</p><ul><li>remove the <code>\</code> from the text</li><li>update the <code>override</code> variable</li><li><code>continue</code> to the next loop, effectively starting to look for another <code>opening</code> delimiter</li></ul><pre><code>if text[opening - 1] == "\\":
+    text = text[:opening - 1] + text[opening:]
+    node.text = text
+    override = opening - start_index
+    continue
+</code></pre><p>The previous piece of code is essentially a gatekeeper: as long as no legit opening delimiter is found, the rest of the code won't play out. Before that piece of code is the section that <code>breaks</code> the loop if <code>text.find</code> returns <code>-1</code>; which tells us no opening delimiter was found by the end of the text.</p><p>If our code manages to pass our gatekeeper, then the first thing the code does is resetting the <code>override</code> to 0, because the code will either update the <code>start_index</code> later beyond this point or <code>raise</code> an exception because no closing delimiter was found.</p><pre><code>override = 0
+</code></pre><p>That's all there is to the modification.</p></div></article>
+  </body>
+</html>

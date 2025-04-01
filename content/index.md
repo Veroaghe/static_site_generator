@@ -1,5 +1,7 @@
 # Tolkien Fan Club
 
+**<<** [Follow up on my Static Site Generator development process through this link](project) **>>**
+
 ![JRR Tolkien sitting](/images/tolkien.png)
 
 Here's the deal, **I like Tolkien**.
