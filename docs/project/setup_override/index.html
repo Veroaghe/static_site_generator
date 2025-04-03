@@ -1,0 +1,32 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Setup Override</title>
+    <link href="/static_site_generator/project.css" rel="stylesheet" />
+  </head>
+
+  <body>
+    <article><div><p><a href="/static_site_generator/project"><< Back to Project Page</a></p><h1>Setup Override</h1><blockquote>Lines starting with $ at the start of a text can be used to deliver key/value pairs for a page specific setup</blockquote><h2>Implementation</h2><p>Lines starting with a <code>$</code> dollar sign (can) contain instructions to override the default setup with. I'm not sure if I've implemented this feature in a robust way, but at the moment it does what I want it to do. Here's how it works:</p><ul><li>The text is split into lines.</li><li>Each line is checked of it starts with a <code>$</code>. If not, then the <code>for loop</code> breaks, meaning that these lines need to be at te very top to be detected.</li><li>If a <code>$</code> line is found, then a counter gets an uptick. This counter will be used at the end to return the text without the <code>$</code> lines with.</li><li>Then the code tries to split the line at an <code>=</code> equal sign, to extract a <code>key/value pair</code> from it, to be added to <code>setup_dict</code>.</li><li>When the <code>for loop</code> ends, 2 items are returned: <code>setup_dict</code> and the text starting from the line at the counter.</li></ul><p>For now, I'm using this feature to <a href="/static_site_generator/project/stylesheet_override">assign a specific stylesheet to a page</a> because the default stylesheet is centered around the <a href="/static_site_generator/">Tolkien Fan Page</a>, which isn't very interesting for these documentation pages.</p><pre><code>def extract_setup_override(text):
+    '''
+    Lines at the top of a .md file that start with dollar sign $
+    are used to change certain parameters with during setup
+    The line should contain a key/value pair, written as "key=value"
+    '''
+    lines = text.split("\n")
+    setup_dict = {}
+    count = 0
+    for line in lines:
+        if not line.startswith("$"):
+            break
+        count += 1
+        try:
+            key, value = line[1:-1].strip().split("=")
+            setup_dict[key.strip()] = value.strip()
+        except Exception:
+            print(f"Unable to extract setup override from:\n  {line}")
+    return setup_dict, "\n".join(lines[count:])
+</code></pre></div></article>
+  </body>
+</html>

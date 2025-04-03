@@ -4,11 +4,11 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Escaped Delimiters</title>
-    <link href="/static_site_generator/index.css" rel="stylesheet" />
+    <link href="/static_site_generator/project.css" rel="stylesheet" />
   </head>
 
   <body>
-    <article><div><h1>Escaped Delimiters</h1><p><a href="/static_site_generator/project"><< Back to Project Development Overview</a></p><blockquote>Escaped delimiters are ignored by the <code>split_nodes_delimiters</code> function</blockquote><h2>Implementation</h2><p>My version of the <code>split_nodes_delimiters</code> function uses a <code>start_index</code> variable to tell <code>text.find</code> from which index to start looking for the next <code>opening</code> delimiter. However, if an escaped character has been found, then we shouldn't start looking for other delimiters from <code>start_index</code> but from the index at which we found the last escaped delimiter. To solve this, I've added an <code>override</code> variable:</p><pre><code>start_index = 0
+    <article><div><p><a href="/static_site_generator/project"><< Back to Project Page</a></p><h1>Escaped Delimiters</h1><p><a href="/static_site_generator/project"><< Back to Project Development Overview</a></p><blockquote>Escaped delimiters are ignored by the <code>split_nodes_delimiters</code> function</blockquote><h2>Implementation</h2><p>My version of the <code>split_nodes_delimiters</code> function uses a <code>start_index</code> variable to tell <code>text.find</code> from which index to start looking for the next <code>opening</code> delimiter. However, if an escaped character has been found, then we shouldn't start looking for other delimiters from <code>start_index</code> but from the index at which we found the last escaped delimiter. To solve this, I've added an <code>override</code> variable:</p><pre><code>start_index = 0
 override = 0
 while True: 
     opening = text.find(delimiter, start_index + override)

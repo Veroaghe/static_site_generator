@@ -80,3 +80,6 @@ class Test_ParentNode(unittest.TestCase):
     def test_parentnode_no_children_error(self):
         parent_node = ParentNode("div", None)
         self.assertRaises(ValueError, parent_node.to_html)
+
+if __name__ == "__main__":
+    unittest.main()

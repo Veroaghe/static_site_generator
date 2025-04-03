@@ -1,6 +1,7 @@
-# Tolkien Fan Club
+<p style="font-family:'courier new',sans-serif;color:#617ff4;font-size:14px;text-align:center">This page is an example page for a Static Site Generator project.</p>
+<p style="font-family:'courier new',sans-serif;color:#617ff4;font-size:14px;text-align:center">**<<** [Follow up on my Static Site Generator development process through this link](project) **>>**</p>
 
-**<<** [Follow up on my Static Site Generator development process through this link](project) **>>**
+# Tolkien Fan Club
 
 ![JRR Tolkien sitting](/images/tolkien.png)
 

@@ -1,0 +1,18 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Stylesheet Override</title>
+    <link href="/static_site_generator/project.css" rel="stylesheet" />
+  </head>
+
+  <body>
+    <article><div><p><a href="/static_site_generator/project"><< Back to Project Page</a></p><h1>Stylesheet Override</h1><blockquote>Using the setup override from point 2, it is now possible to assign a different stylesheet to a page</blockquote><h2>Implementation</h2><ul><li>In the <code>generate_page</code> function, that is used to fabricate an HTML page from a Markdown page, the <a href="/static_site_generator/project/setup_override">extract_setup_override</a> function is called on the markdown text. It returns a <code>setup_override</code> dictionary and the text.</li><li>If the dictionary contains a <code>stylesheet</code> key, its value will be used to replace the default stylesheet.</li></ul><pre><code>setup_dict, from_contents = extract_setup_override(from_contents)
+# ...
+if "stylesheet" in setup_dict:
+    template_contents = template_contents.replace("/index.css", f"/{setup_dict['stylesheet']}")
+</code></pre><p><b>Example</b> of how a setup_override line looks in the markdown file</p><pre><code>$ stylesheet=project.css $
+</code></pre></div></article>
+  </body>
+</html>
