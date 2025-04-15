@@ -1,0 +1,40 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>List indentation</title>
+    <link href="/static_site_generator/project.css" rel="stylesheet" />
+  </head>
+
+  <body>
+    <article><div><p><a href="/static_site_generator/project"><< Back to Project Page</a></p><h1>List indentation</h1><blockquote>Add indentation to lists with alternating list style-types for each level of indentation</blockquote><h2>Work In Progress</h2><h3>15-04-2025</h3><p><b>Stack Overflow</b> <a href="https://stackoverflow.com/questions/29464815/indenting-lists-in-html">Indenting lists in HTML</a></p><p>To indent a list, we need to add the whole <code>ol</code> or <code>ul</code> parent node of the indented section to the list of children of the previous <code>li</code> node of the list that is less indented.</p><p>As a reminder, here's how the HTML nodes are currently structured. Curly brackets represent the list of children for a Parent Node. The following example is for an Ordered List:</p><pre><code>Parent Node OL {
+    Parent Node LI {
+        Leaf Nodes, each containing text as a value and the possibility of formatting (like bold or italic)
+    }
+    Parent Node LI {
+        Leaf Nodes, each containing text as a value and the possibility of formatting (like bold or italic)
+    }
+    ...
+}
+</code></pre><p>Here's how the above example would look if we wanted to add an Unordered List <code>ul</code> between the first and second <code>li</code> item of the Ordered List <code>ol</code>:</p><pre><code>Parent Node OL {
+    Parent Node LI {
+        Leaf Nodes...
+        Parent Node UL {
+            Parent Node LI {
+                Leaf Nodes...
+            }
+            Parent Node LI {
+                Leaf Nodes...
+            }
+            ...
+        }
+    }
+    Parent Node LI {
+        Leaf Nodes...
+    }
+    ...
+}
+</code></pre></div></article>
+  </body>
+</html>

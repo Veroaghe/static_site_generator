@@ -1,3 +1,5 @@
+# To indent lists in HTML, the indented list needs to be a child of an <li> tag
+
 
 from textnode import TextNode, TextType
 from htmlnode import LeafNode, ParentNode
@@ -138,35 +140,9 @@ def block_to_list_of_li_nodes(block):
 
 if __name__ == "__main__":
     text = """
-Some other text.
-
-```python
-def is_this_a_valid_code_block():
-    while True:
-        break
-    return True
-```
-
-```python
-def is_this_a_valid_code_block():
-    while True:
-        break
-    return True
-
-
-def a_second_function():
-    return
-
-
-def a_third_function():
-    return
-```
-
-Some other text.
+- test
+- test
+- test
 """
     
-    print(markdown_to_html_node(text).children[2].children[0].children[0].value)
-    # blocks = markdown_to_blocks(text)
-    # [print([block]) for block in blocks]
-    # print()
-    # [print(block, "\n") for block in blocks]
+    print(markdown_to_html_node(text))

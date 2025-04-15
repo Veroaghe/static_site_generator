@@ -12,7 +12,7 @@ The [Static Site Generator Project](https://www.boot.dev/courses/build-static-si
 
 ## To Do
 
-- Add indentation to lists with alternating list style-types for each level of indentation
+- [Add indentation to lists with alternating list style-types for each level of indentation](/project/indented_lists)
 - Make nested formatting possible.
 - Add ability to format the text of a link
 - Add `*` as a delimiter for italic text
