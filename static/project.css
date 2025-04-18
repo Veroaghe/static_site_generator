@@ -15,6 +15,10 @@ b {
   font-weight: 900;
 }
 
+i {
+  color: hsl(41, 8%, 53%);
+}
+
 h2,
 h3,
 h4,
@@ -34,6 +38,7 @@ h1 {
 }
 
 h2 {
+  color: #579ecd;
   font-size: 2em;
 }
 

@@ -34,13 +34,18 @@ def markdown_to_blocks(text): # BOOT.DEV Code
         if block == "":
             continue
         
-        block = block.strip()
+        # No stripping occurs while handling a code_block
+        # with double newlines inside to keep the indentation of
+        # the first line in a block.
+        if not open_code_block:
+            block = block.strip()
 
         ### Start check for multi-segmented code block ###
         if open_code_block:
             stalled_blocks.append(block)
             if block.endswith('```'):
                 block = "\n\n".join(stalled_blocks)
+                stalled_blocks = []
                 open_code_block = False
 
         if block.startswith('```') and not block.endswith('```') and not open_code_block:
@@ -50,6 +55,9 @@ def markdown_to_blocks(text): # BOOT.DEV Code
 
         if not open_code_block:
             new_blocks.append(block)
+    
+    if open_code_block:
+        raise Exception("The text contains an unclosed code_block")
     
     return new_blocks
 
@@ -100,4 +108,3 @@ if __name__ == "__main__":
     [print(out) for out in output]
     # print()
     print(text)
-
